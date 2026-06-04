@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import AddToCartBtn from '../components/AddToCartBtn'; // <-- Added Import
 
 export default async function Home() {
   // This securely fetches from your live backend!
@@ -60,10 +61,16 @@ export default async function Home() {
               <div className="p-8 flex flex-col flex-grow">
                 <h3 className="text-2xl font-serif font-bold text-gray-900 mb-3">{product.name}</h3>
                 <p className="text-gray-500 text-sm mb-6 line-clamp-2 flex-grow">{product.description}</p>
-                <div className="mt-auto pt-6 border-t border-gray-100">
-                  <span className="text-3xl font-extrabold text-amber-900">₹{product.price}</span>
-                  <span className="text-sm text-gray-400 font-medium ml-2">/ {product.weight_g}g</span>
+                
+                {/* <-- Replaced the bottom div with the new one containing the AddToCartBtn --> */}
+                <div className="flex justify-between items-center mt-auto pt-6 border-t border-gray-100">
+                  <div>
+                    <span className="text-3xl font-extrabold text-amber-900">₹{product.price}</span>
+                    <span className="text-sm text-gray-400 font-medium ml-2">/ {product.weight_g}g</span>
+                  </div>
+                  <AddToCartBtn product={product} />
                 </div>
+
               </div>
             </div>
           </Link>

@@ -27,8 +27,8 @@ export default function CheckoutPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ ...form, total_amount: total, items })
-      });
+        body: JSON.stringify{ ...form, total_amount: total, items })
+      };
       const data = await res.json();
       if (data.id) {
         clearCart();
