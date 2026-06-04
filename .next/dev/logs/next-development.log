@@ -1,0 +1,6 @@
+{"timestamp":"00:00:18.636","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:27.644","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:00:49.281","source":"Server","level":"LOG","message":"○ Compiling /product/[slug] ..."}
+{"timestamp":"00:01:19.772","source":"Server","level":"LOG","message":"○ Compiling /_not-found/page ..."}
+{"timestamp":"00:01:21.396","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:01:39.395","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
