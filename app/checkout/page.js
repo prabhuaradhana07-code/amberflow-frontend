@@ -24,7 +24,7 @@ export default function CheckoutPage() {
     const token = localStorage.getItem('token');
     const items = cart.map(i => ({ product_id: i.id, quantity: i.quantity, price: i.price }));
     try {
-      const res = await fetch('http://localhost:5000/api/orders', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ ...form, total_amount: total, items })

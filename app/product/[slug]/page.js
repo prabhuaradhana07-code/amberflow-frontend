@@ -12,7 +12,7 @@ export default function ProductPage() {
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/products/${slug}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`)
       .then(r => r.json())
       .then(setProduct);
   }, [slug]);
