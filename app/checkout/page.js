@@ -84,9 +84,9 @@ export default function CheckoutPage() {
         }),
       });
       const data = await res.json();
-      if (res.ok && data.id) {
+      if (res.ok && data.order?.id) {
         clearCart();
-        router.push(`/order-success?id=${data.id}`);
+        router.push(`/order-success?id=${data.order.id}`);
       } else {
         setError(data.error || 'Failed to place order. Please try again.');
       }
