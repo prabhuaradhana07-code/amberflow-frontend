@@ -5,6 +5,7 @@ import { ToastProvider } from '@/components/Toast';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingChat from '@/components/FloatingChat';
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
             <Footer />
           </CartProvider>
         </ToastProvider>
+        <Analytics />
       </body>
     </html>
   );
