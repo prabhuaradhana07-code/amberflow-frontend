@@ -39,8 +39,8 @@ export default function DashboardPage() {
     setUser(JSON.parse(u));
 
     Promise.all([
-      fetch(`${API_URL}/api/auth/profile`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
-      fetch(`${API_URL}/api/orders`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json())
+      fetch(`${API_URL}/api/auth/profile`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' }).then(r => r.json()),
+      fetch(`${API_URL}/api/orders`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' }).then(r => r.json())
     ]).then(([profileData, ordersData]) => {
       setProfile(profileData);
       setEditForm({

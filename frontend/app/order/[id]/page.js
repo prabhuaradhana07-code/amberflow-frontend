@@ -30,6 +30,7 @@ export default function OrderTrackingPage() {
 
     fetch(`${API_URL}/api/orders/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
     })
       .then((r) => {
         if (!r.ok) throw new Error('Order not found');
@@ -74,7 +75,7 @@ export default function OrderTrackingPage() {
     );
   }
 
-  const currentStepIndex = TRACKING_STEPS.findIndex((s) => s.key === order.status);
+  const currentStepIndex = TRACKING_STEPS.findIndex((s) => s.key === order.status?.toLowerCase());
   const items = order.items || [];
 
   return (

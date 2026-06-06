@@ -41,9 +41,9 @@ export default function AdminDashboardPage() {
     }
 
     Promise.all([
-      fetch(`${API_URL}/api/orders/all`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
-      fetch(`${API_URL}/api/auth/vendors`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
-      fetch(`${API_URL}/api/products`).then(r => r.json())
+      fetch(`${API_URL}/api/orders/all`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' }).then(r => r.json()),
+      fetch(`${API_URL}/api/auth/vendors`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' }).then(r => r.json()),
+      fetch(`${API_URL}/api/products`, { cache: 'no-store' }).then(r => r.json())
     ])
     .then(([ordersData, vendorsData, productsData]) => {
       setOrders(Array.isArray(ordersData) ? ordersData : []);
