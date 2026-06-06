@@ -14,11 +14,11 @@ export default function FloatingChat() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
       {/* Chat window */}
       <div 
-        className={`bg-white rounded-2xl shadow-2xl border border-amber-100 w-72 mb-4 overflow-hidden transition-all duration-300 origin-bottom-right ${
-          isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+        className={`bg-white rounded-2xl shadow-2xl border border-amber-100 w-72 mb-4 overflow-hidden transition-all duration-300 origin-bottom-right pointer-events-auto ${
+          isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'
         }`}
       >
         <div className="bg-gradient-to-r from-amber-500 to-amber-600 p-4 text-white">
@@ -50,7 +50,7 @@ export default function FloatingChat() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full shadow-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform duration-300 hover:shadow-amber-500/50 ${isOpen ? 'rotate-90' : 'animate-bounce-slow'}`}
+        className={`w-14 h-14 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full shadow-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform duration-300 hover:shadow-amber-500/50 pointer-events-auto ${isOpen ? 'rotate-90' : 'animate-bounce-slow'}`}
         aria-label="Chat with us"
       >
         {isOpen ? '✕' : '💬'}
