@@ -71,6 +71,10 @@ export default function Navbar() {
     { href: '/dashboard', label: 'Dashboard' },
   ];
 
+  if (user && user.role === 'admin') {
+    navLinks.push({ href: '/admin', label: 'Admin Panel' });
+  }
+
   return (
     <>
       <nav
