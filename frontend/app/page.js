@@ -31,6 +31,7 @@ const testimonials = [
 
 export default async function Home() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (url) => url && url.startsWith('/uploads/') ? `${apiUrl}${url}` : url;
   let products = [];
   try {
     const res = await fetch(`${apiUrl}/api/products`, { cache: 'no-store' });
@@ -129,7 +130,7 @@ export default async function Home() {
                   {/* Image */}
                   <div className="h-72 relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100">
                     <Image
-                      src={product.image_url || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length]}
+                      src={getImageUrl(product.image_url) || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length]}
                       alt={product.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-700"

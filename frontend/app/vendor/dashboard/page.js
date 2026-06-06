@@ -12,6 +12,8 @@ export default function VendorDashboardPage() {
   const { showToast } = useToast();
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [productForm, setProductForm] = useState({
     name: '', description: '', honey_type: '', price: '', weight_g: '', stock: ''
@@ -43,11 +45,17 @@ export default function VendorDashboardPage() {
         setUser(profData);
         
         if (profData.is_approved_vendor) {
-          const statRes = await fetch(`${API_URL}/api/orders/vendor-stats`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          const [statRes, prodRes, ordRes] = await Promise.all([
+            fetch(`${API_URL}/api/orders/vendor-stats`, { headers: { Authorization: `Bearer ${token}` } }),
+            fetch(`${API_URL}/api/products/vendor`, { headers: { Authorization: `Bearer ${token}` } }),
+            fetch(`${API_URL}/api/orders/vendor-orders`, { headers: { Authorization: `Bearer ${token}` } })
+          ]);
           const statData = await statRes.json();
+          const prodData = await prodRes.json();
+          const ordData = await ordRes.json();
           setStats(Array.isArray(statData) ? statData : []);
+          setProducts(Array.isArray(prodData) ? prodData : []);
+          setOrders(Array.isArray(ordData) ? ordData : []);
         }
       } catch (err) {
         console.error(err);
@@ -74,6 +82,8 @@ export default function VendorDashboardPage() {
       });
       if (res.ok) {
         showToast('Product added successfully!', 'success');
+        const newProd = await res.json();
+        setProducts(prev => [newProd, ...prev]);
         setProductForm({ name: '', description: '', honey_type: '', price: '', weight_g: '', stock: '' });
         setProductImage(null);
       } else {
@@ -85,6 +95,27 @@ export default function VendorDashboardPage() {
     }
     setAddingProduct(false);
   };
+
+  const handleDeleteProduct = async (id) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setProducts(prev => prev.filter(p => p.id !== id));
+        showToast('Product deleted', 'success');
+      } else {
+        showToast('Failed to delete product', 'error');
+      }
+    } catch {
+      showToast('Network error', 'error');
+    }
+  };
+
+  const getImageUrl = (url) => url && url.startsWith('/uploads/') ? `${API_URL}${url}` : url;
 
   if (loading) {
     return (
@@ -150,10 +181,36 @@ export default function VendorDashboardPage() {
                 </div>
               )}
             </div>
+
+            {/* Order Insights */}
+            <div className="bg-white rounded-2xl shadow-xl border border-amber-100 p-6 mt-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <span>📦</span> Recent Orders
+              </h3>
+              {orders.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">No recent orders found.</p>
+              ) : (
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                  {orders.map((ord, i) => (
+                    <div key={i} className="p-4 bg-amber-50 rounded-xl border border-amber-100">
+                      <div className="flex justify-between mb-2">
+                        <span className="font-bold text-gray-800">#{ord.id} - {ord.shipping_name}</span>
+                        <span className="text-xs font-bold text-white bg-amber-500 px-2 py-1 rounded-full">{ord.status}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">{ord.product_name} (x{ord.quantity})</p>
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>{ord.shipping_city}, {ord.shipping_state}</span>
+                        <span>₹{parseFloat(ord.item_price) * ord.quantity}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Add Product Form */}
-          <div className="md:col-span-2">
+          {/* Add Product Form & My Products */}
+          <div className="md:col-span-2 space-y-6">
             <div className="bg-white rounded-2xl shadow-xl border border-amber-100 p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Add New Product</h2>
               <form onSubmit={handleAddProduct} className="space-y-6">
@@ -197,6 +254,49 @@ export default function VendorDashboardPage() {
                   {addingProduct ? 'Adding Product...' : 'Publish Product'}
                 </button>
               </form>
+            </div>
+
+            {/* My Products Table */}
+            <div className="bg-white rounded-2xl shadow-xl border border-amber-100 p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">My Products</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-amber-50 text-amber-900 text-sm">
+                      <th className="p-3 rounded-tl-lg font-bold">Image</th>
+                      <th className="p-3 font-bold">Product</th>
+                      <th className="p-3 font-bold">Price</th>
+                      <th className="p-3 font-bold">Stock</th>
+                      <th className="p-3 rounded-tr-lg font-bold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="p-4 text-center text-gray-500">You haven't added any products yet.</td>
+                      </tr>
+                    ) : (
+                      products.map(p => (
+                        <tr key={p.id} className="border-b border-amber-50 hover:bg-amber-50/30">
+                          <td className="p-3">
+                            {p.image_url && (
+                              <img src={getImageUrl(p.image_url)} alt={p.name} className="w-12 h-12 rounded-lg object-cover" />
+                            )}
+                          </td>
+                          <td className="p-3 font-medium text-gray-800">{p.name}</td>
+                          <td className="p-3 text-amber-700 font-bold">₹{p.price}</td>
+                          <td className="p-3 text-gray-600">{p.stock}</td>
+                          <td className="p-3 text-right">
+                            <button onClick={() => handleDeleteProduct(p.id)} className="text-red-500 hover:text-red-700 font-bold text-sm bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 

@@ -157,7 +157,8 @@ export default function ProductPage() {
     );
   }
 
-  const imageUrl = product.image_url || PRODUCT_IMAGES[product.id % PRODUCT_IMAGES.length];
+  const getImageUrl = (url) => url && url.startsWith('/uploads/') ? `${API_URL}${url}` : url;
+  const imageUrl = getImageUrl(product.image_url) || PRODUCT_IMAGES[product.id % PRODUCT_IMAGES.length];
   const avgRating = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
     : null;

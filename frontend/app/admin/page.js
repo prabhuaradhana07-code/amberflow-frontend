@@ -20,6 +20,7 @@ export default function AdminDashboardPage() {
   const { showToast } = useToast();
   const [orders, setOrders] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(null);
   const [activeTab, setActiveTab] = useState('orders');
@@ -41,11 +42,13 @@ export default function AdminDashboardPage() {
 
     Promise.all([
       fetch(`${API_URL}/api/orders/all`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
-      fetch(`${API_URL}/api/auth/vendors`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json())
+      fetch(`${API_URL}/api/auth/vendors`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+      fetch(`${API_URL}/api/products`).then(r => r.json())
     ])
-    .then(([ordersData, vendorsData]) => {
+    .then(([ordersData, vendorsData, productsData]) => {
       setOrders(Array.isArray(ordersData) ? ordersData : []);
       setVendors(Array.isArray(vendorsData) ? vendorsData : []);
+      setProducts(Array.isArray(productsData) ? productsData : []);
     })
     .catch(err => {
       showToast('Failed to fetch admin data.', 'error');
@@ -102,6 +105,27 @@ export default function AdminDashboardPage() {
       showToast('Network error while approving vendor', 'error');
     }
   };
+
+  const handleDeleteProduct = async (id) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setProducts((prev) => prev.filter((p) => p.id !== id));
+        showToast('Product deleted successfully', 'success');
+      } else {
+        showToast('Failed to delete product', 'error');
+      }
+    } catch {
+      showToast('Network error', 'error');
+    }
+  };
+
+  const getImageUrl = (url) => url && url.startsWith('/uploads/') ? `${API_URL}${url}` : url;
 
   if (loading) {
     return (
@@ -185,6 +209,14 @@ export default function AdminDashboardPage() {
                 {vendors.filter(v => !v.is_approved_vendor).length}
               </span>
             )}
+          </button>
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+              activeTab === 'products' ? 'bg-amber-600 text-white shadow-lg shadow-amber-200/50' : 'bg-white text-gray-600 hover:bg-amber-50 border border-amber-100'
+            }`}
+          >
+            🍯 Manage Products
           </button>
         </div>
 
@@ -308,6 +340,61 @@ export default function AdminDashboardPage() {
                               Approve
                             </button>
                           )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'products' && (
+          <div className="bg-white rounded-2xl shadow-xl border border-amber-100 overflow-hidden">
+            <div className="p-6 md:p-8 border-b border-amber-100 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Manage Platform Products</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-amber-50/50 text-amber-900 text-sm uppercase tracking-wide">
+                    <th className="p-4 font-bold border-b border-amber-100">Image</th>
+                    <th className="p-4 font-bold border-b border-amber-100">Product Info</th>
+                    <th className="p-4 font-bold border-b border-amber-100">Price & Stock</th>
+                    <th className="p-4 font-bold border-b border-amber-100">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-amber-100">
+                  {products.length === 0 ? (
+                    <tr><td colSpan="4" className="p-8 text-center text-gray-500">No products available.</td></tr>
+                  ) : (
+                    products.map((product) => (
+                      <tr key={product.id} className="hover:bg-amber-50/30 transition-colors">
+                        <td className="p-4">
+                          {product.image_url ? (
+                            <img src={getImageUrl(product.image_url)} alt={product.name} className="w-16 h-16 rounded-lg object-cover shadow-sm" />
+                          ) : (
+                            <div className="w-16 h-16 bg-amber-100 rounded-lg flex items-center justify-center text-2xl">🍯</div>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          <p className="font-bold text-gray-900 text-lg">{product.name}</p>
+                          <p className="text-sm text-amber-700 font-semibold">{product.honey_type || 'Standard'} Honey</p>
+                          <p className="text-xs text-gray-500 line-clamp-1 max-w-xs">{product.description}</p>
+                        </td>
+                        <td className="p-4">
+                          <p className="font-bold text-gray-900">₹{product.price}</p>
+                          <p className="text-xs text-gray-500">Stock: {product.stock}</p>
+                          <p className="text-xs text-gray-500">Weight: {product.weight_g}g</p>
+                        </td>
+                        <td className="p-4">
+                          <button
+                            onClick={() => handleDeleteProduct(product.id)}
+                            className="bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-100 transition-colors shadow-sm"
+                          >
+                            Delete Product
+                          </button>
                         </td>
                       </tr>
                     ))
