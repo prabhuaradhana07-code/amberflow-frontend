@@ -1,24 +1,33 @@
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
-import { CartProvider } from '../context/CartContext';
-import Navbar from '../components/Navbar'; 
+import { CartProvider } from '@/context/CartContext';
+import { ToastProvider } from '@/components/Toast';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
 
 export const metadata = {
-  title: 'AmberFlow | Organic Honey',
-  description: 'Premium organic honey from Indian farms.',
+  title: 'AmberFlow | Premium Organic Honey',
+  description: 'Discover the finest organic honey, sustainably harvested from Indian farms. Pure, raw, and full of nature\'s golden goodness.',
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} ${playfair.variable} font-sans bg-amber-50 text-gray-900`}>
-        <CartProvider>
-          <Navbar />
-          {children}
-        </CartProvider>
+    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
+      <body
+        className={`${inter.variable} ${playfair.variable} font-sans bg-amber-50 text-gray-900 antialiased`}
+      >
+        <ToastProvider>
+          <CartProvider>
+            <Navbar />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );
