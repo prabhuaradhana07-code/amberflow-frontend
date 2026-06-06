@@ -36,7 +36,11 @@ export default function OrderTrackingPage() {
         return r.json();
       })
       .then((data) => {
-        setOrder(data);
+        if (data.order) {
+          setOrder({ ...data.order, items: data.items || [] });
+        } else {
+          setOrder(data);
+        }
         setLoading(false);
       })
       .catch((err) => {
