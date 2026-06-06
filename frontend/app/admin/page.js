@@ -127,6 +127,37 @@ export default function AdminDashboardPage() {
 
   const getImageUrl = (url) => url && url.startsWith('/uploads/') ? `${API_URL}${url}` : url;
 
+  const handleDownloadCSV = () => {
+    if (orders.length === 0) {
+      showToast('No orders to export', 'error');
+      return;
+    }
+    const headers = ['Order ID', 'Customer Name', 'Customer Email', 'City', 'State', 'Amount (INR)', 'Date', 'Status', 'UPI Ref'];
+    const rows = orders.map(o => [
+      o.id,
+      `"${(o.user_name || o.shipping_name || '').replace(/"/g, '""')}"`,
+      `"${(o.user_email || '').replace(/"/g, '""')}"`,
+      `"${(o.shipping_city || '').replace(/"/g, '""')}"`,
+      `"${(o.shipping_state || '').replace(/"/g, '""')}"`,
+      o.total,
+      new Date(o.created_at).toLocaleDateString('en-IN'),
+      o.status,
+      o.upi_ref || ''
+    ]);
+    
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `amberflow_orders_backup_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('Orders backup downloaded successfully!', 'success');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FFFAEF]">
@@ -222,8 +253,17 @@ export default function AdminDashboardPage() {
 
         {activeTab === 'orders' && (
           <div className="bg-white rounded-2xl shadow-xl border border-amber-100 overflow-hidden">
-            <div className="p-6 md:p-8 border-b border-amber-100 flex justify-between items-center">
+            <div className="p-6 md:p-8 border-b border-amber-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <h2 className="text-2xl font-bold text-gray-900">All Customer Orders</h2>
+              <button
+                onClick={handleDownloadCSV}
+                className="bg-green-600 hover:bg-green-700 text-white font-bold px-5 py-2.5 rounded-lg text-sm shadow flex items-center gap-2 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download CSV Backup
+              </button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
