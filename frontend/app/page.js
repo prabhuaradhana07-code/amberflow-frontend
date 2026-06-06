@@ -34,7 +34,7 @@ export default async function Home() {
   const getImageUrl = (url) => url && url.startsWith('/uploads/') ? `${apiUrl}${url}` : url;
   let products = [];
   try {
-    const res = await fetch(`${apiUrl}/api/products`, { cache: 'no-store' });
+    const res = await fetch(`${apiUrl}/api/products`, { next: { revalidate: 60 } });
     products = res.ok ? await res.json() : [];
   } catch {
     products = [];
