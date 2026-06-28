@@ -56,8 +56,8 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-amber-950/30" />
         <div className="absolute inset-0 bg-gradient-to-r from-amber-900/20 via-transparent to-amber-900/20" />
 
-        <div className="relative z-10 px-6 max-w-4xl mx-auto">
-          <span className="inline-block text-amber-400 font-bold tracking-[0.35em] uppercase text-xs sm:text-sm mb-6 animate-fade-in-down">
+        <div className="relative z-10 px-8 py-12 md:py-16 max-w-4xl mx-auto glass-panel rounded-3xl backdrop-blur-md shadow-2xl">
+          <span className="inline-block text-amber-300 font-bold tracking-[0.35em] uppercase text-xs sm:text-sm mb-6 animate-fade-in-down">
             ✦ Directly from the Source ✦
           </span>
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-serif text-white mb-6 drop-shadow-2xl leading-[1.1] animate-fade-in-up">
@@ -96,8 +96,8 @@ export default async function Home() {
             { icon: '🍯', title: 'Raw & Unfiltered', desc: 'Retains all natural pollen, enzymes, and antioxidants for maximum benefit.' },
             { icon: '🌿', title: 'Farm to Table', desc: 'Directly from Indian beekeepers to your home within days of harvest.' },
           ].map((badge, i) => (
-            <div key={i} className="flex flex-col items-center text-center max-w-[240px] group">
-              <div className="w-20 h-20 bg-amber-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-amber-200 transition-colors duration-300 group-hover:scale-110 transform">
+            <div key={i} className="glass-card flex flex-col items-center text-center p-8 max-w-[280px] group rounded-3xl transition-all duration-500 hover:-translate-y-3 hover:shadow-amber-lg cursor-default">
+              <div className="w-20 h-20 bg-amber-100/50 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-5 group-hover:bg-amber-200 transition-colors duration-500 group-hover:scale-110 transform shadow-inner">
                 <span className="text-4xl">{badge.icon}</span>
               </div>
               <h3 className="font-bold text-amber-900 text-lg mb-2">{badge.title}</h3>

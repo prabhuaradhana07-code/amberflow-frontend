@@ -178,7 +178,7 @@ export default function ProductPage() {
 
       {/* ─── Product Detail ─── */}
       <div className="max-w-6xl mx-auto px-6 mt-8">
-        <div className="bg-white rounded-[2rem] shadow-xl border border-amber-100/60 overflow-hidden">
+        <div className="glass-card rounded-[2rem] shadow-xl overflow-hidden">
           <div className="flex flex-col lg:flex-row">
             {/* Left: Image */}
             <div className="lg:w-1/2 relative bg-gradient-to-br from-amber-50 via-amber-100 to-amber-50 min-h-[400px] lg:min-h-[600px]">
@@ -268,7 +268,7 @@ export default function ProductPage() {
                     className={`w-full font-bold text-lg py-5 rounded-2xl shadow-lg transition-all duration-300 ${
                       added
                         ? 'bg-green-500 text-white scale-[1.02]'
-                        : 'bg-amber-600 hover:bg-amber-700 text-white hover:shadow-xl hover:shadow-amber-200/50 active:scale-[0.98]'
+                        : 'bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-white hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 active:scale-[0.98]'
                     }`}
                   >
                     {added ? '✓ Added to Cart!' : `Add to Cart — ₹${(parseFloat(product.price) * quantity).toFixed(0)}`}

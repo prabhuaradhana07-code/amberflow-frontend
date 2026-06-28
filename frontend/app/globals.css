@@ -780,3 +780,28 @@ textarea:focus-visible {
     display: none !important;
   }
 }
+
+/* ─── Glassmorphism & Luxury Utilities ───────────────────── */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 24px 0 rgba(245, 158, 11, 0.08);
+}
+
+.glass-amber {
+  background: rgba(255, 251, 235, 0.65); /* amber-50 */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(253, 230, 138, 0.5); /* amber-200 */
+}
