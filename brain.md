@@ -9,8 +9,8 @@ This document serves as the overarching context and architecture guide for the *
 - **Database:** PostgreSQL (using `pg` pool).
 - **Authentication:** JWT (JSON Web Tokens) with Bcrypt password hashing.
 - **Hosting / Deployment:**
-  - **Frontend:** Railway (Custom Domain: `amberflow.in`)
-  - **Backend:** Railway (PostgreSQL + Node.js server)
+  - **Frontend:** Railway (Custom Domain: `amberflow.in`, Repository: `amberflow-frontend`)
+  - **Backend:** Railway (PostgreSQL + Node.js server, Repository: `amberflow-backend` with Root Directory set to `/backend`)
   - **File Storage:** Local disk storage via `multer` (served via `/uploads` static route on the backend).
 
 ## 2. User Roles & Permissions
@@ -37,7 +37,7 @@ The system supports three distinct roles (`users.role`):
 
 ### `/frontend` (Next.js App Router)
 - `/.env`: Contains `NEXT_PUBLIC_API_URL` pointing to the backend.
-- `/app/login` & `/app/register`: Authentication pages. Stores JWT in `localStorage`.
+- `/app/login` & `/app/register`: Authentication pages. Uses `credentials: 'include'` for secure HttpOnly cookie sessions.
 - `/app/product/[slug]`: Dynamic product details page.
 - `/app/checkout`: Order processing and cart management.
 - `/app/dashboard`: 
@@ -47,7 +47,8 @@ The system supports three distinct roles (`users.role`):
 ## 4. Key Security Implementations
 - **SQL Injection:** Prevented by strictly using PostgreSQL parameterized queries (`$1, $2`).
 - **Passwords:** Hashed using `bcryptjs`.
-- **CORS:** Configured to allow cross-origin requests from the frontend domain.
+- **Authentication (Cookies):** JWT is stored in an `HttpOnly`, `Secure` cookie with `SameSite: 'none'` (for production cross-site support between frontend and backend domains).
+- **CORS:** Strictly whitelisted to `amberflow.in`, `localhost:3000`, and `*.up.railway.app`.
 - **Vulnerabilities Patched:**
   - **IPv6 Railway Fix:** Nodemailer is forced to use IPv4 DNS resolution to prevent `ENETUNREACH` errors on Railway.
   - **Multer:** Basic mimetype filtering implemented for image uploads.
@@ -57,6 +58,7 @@ The system supports three distinct roles (`users.role`):
 - **Grafana k6:** Used for load testing. The backend max capacity on the free tier is roughly around ~50-100 concurrent VUs before Vercel/Railway starts dropping connections (`tls: internal error` or `ENOTFOUND` due to DDoS protection).
 
 ## 6. Known Quirks / Important Notes
-- **Local Storage Reliance:** The frontend relies heavily on `localStorage` for session management (`user` and `token` keys). If the admin panel shows blank records unexpectedly, it is usually because the JWT token expired.
+- **Dual-Repository Syncing:** The local environment is a monorepo containing both `/frontend` and `/backend`. However, Railway deploys them from *two separate* GitHub repositories (`amberflow-frontend` and `amberflow-backend`). If you make backend changes, you MUST forcefully push the monolithic `main` branch to the `backend` git remote so Railway detects it.
+- **Railway Monorepo Setup:** The `amberflow-backend` Railway project requires the **Root Directory** to be explicitly set to `/backend` in the dashboard settings since the repo structure contains the app inside a folder.
 - **File Uploads:** Since uploads are stored locally on the Railway container (`/uploads`), images might be lost if the Railway container is completely rebuilt without persistent volume storage. 
 - **Railway DNS:** Railway's `.up.railway.app` domains can sometimes drop (`ENOTFOUND`) under heavy DoS loads. If this happens, delete and regenerate the public domain in the Railway dashboard.
